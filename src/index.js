@@ -17,6 +17,7 @@ const onSearchFormSubmit = event => {
   pixabayApi.page = 1;
 
   if (pixabayApi.q === '') {
+    btnLoadMore.classList.add('is-hidden');
     galleryArr.innerHTML = '';
     Notiflix.Notify.info('Request is empty, please enter a designation!');
     return;
