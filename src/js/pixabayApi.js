@@ -9,8 +9,8 @@ export class PixabayApi {
     this.page = 1;
   }
 
-  fetchPhotos() {
-    return axios.get(`${this.#BASE_URL}?key=${this.#API_KEY}`, {
+  async fetchPhotos() {
+    return await axios.get(`${this.#BASE_URL}?key=${this.#API_KEY}`, {
       params: {
         q: this.q,
         page: this.page,
