@@ -1,5 +1,6 @@
 .search-form{
-    margin: 0px auto;
+display: flex;
+justify-content: center;
 }
 
 .load-more.is-hidden {
@@ -15,6 +16,7 @@
 
 .photo-card {
     flex-basis: calc((100% - 120px) / 4);
+    margin-bottom: 20px;
 }
 
 .search-form~button {
@@ -22,4 +24,10 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+.info{
+    display: flex;
+    width: 310px;
+    text-align: center;
 }
