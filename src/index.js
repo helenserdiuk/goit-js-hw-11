@@ -18,6 +18,7 @@ const onSearchFormSubmit = event => {
 
   if (pixabayApi.q === '') {
     galleryArr.innerHTML = '';
+    Notiflix.Notify.info('Request is empty, please enter a designation!');
     return;
   }
 
@@ -53,6 +54,8 @@ const onSearchFormSubmit = event => {
     .catch(err => {
       console.log(err);
     });
+  searchForm.reset();
+  btnLoadMore.classList.add('is-hidden');
 };
 
 const onLoadMoreBtnElClick = event => {
@@ -63,6 +66,9 @@ const onLoadMoreBtnElClick = event => {
       galleryArr.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
 
       if (pixabayApi.page === Math.ceil(data.totalHits / 40)) {
+        Notiflix.Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
         event.target.classList.add('is-hidden');
       }
     })
