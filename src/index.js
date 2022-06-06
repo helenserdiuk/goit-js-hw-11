@@ -1,4 +1,4 @@
-import { PixabayApi } from './js/pixabayApi';
+import { PixabayApi } from './js/pixabayApi.js';
 import createGalleryCards from './template/gallery-card.hbs';
 import Notiflix from 'notiflix';
 
@@ -15,6 +15,11 @@ const onSearchFormSubmit = event => {
     .trim()
     .toLowerCase();
   pixabayApi.page = 1;
+
+  if (pixabayApi.q === '') {
+    galleryArr.innerHTML = '';
+    return;
+  }
 
   pixabayApi
     .fetchPhotos()
