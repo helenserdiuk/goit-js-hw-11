@@ -6,23 +6,23 @@
     display: none;
 }
 
-/* .gallery {
+.gallery {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     margin-left: -30px;
     margin-top: -30px;
-    margin-bottom: 20px; 
-} */
+    margin-top: 40px;
+}
 
-/* .gallery::children{
-flex-basis: calc((100% - 120px) / 4);
-} */
-
-/* .photo-card{
-    flex-basis: calc((100% - 120px) / 4);
+.photo-card {
     margin-left: 30px;
     margin-top: 30px;
-    opacity: 0;
-    transform: scale(0);
-    transition: opacity 500ms linear, transform 500ms linear;
-} */
+}
+
+.search-form~button {
+    margin-top: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
