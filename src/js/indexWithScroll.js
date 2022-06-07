@@ -1,14 +1,44 @@
-import { PixabayApi } from './js/pixabayApi.js';
-import createGalleryCards from './template/gallery-card.hbs';
+import { PixabayApi } from './pixabayApi.js';
+import createGalleryCards from '../template/gallery-card.hbs';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const galleryArr = document.querySelector('.gallery');
 const searchForm = document.querySelector('#search-form');
-const btnLoadMore = document.querySelector('.load-more');
 
 const pixabayApi = new PixabayApi();
+
+const intersectionObserverOption = {
+  root: null,
+  rootMargin: '0px 0px 200px 0px',
+  threshold: 1.0,
+};
+
+const intersectionObserver = new IntersectionObserver((entries, observe) => {
+  entries.forEach(async entry => {
+    if (!entry.isIntersecting) {
+      return;
+    }
+    pixabayApi.incrementPage();
+    try {
+      const { data } = await pixabayApi.fetchPhotos();
+      galleryArr.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
+      simpleLightboxImage();
+
+      if (pixabayApi.page === Math.ceil(data.totalHits / 40)) {
+        Notiflix.Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+        intersectionObserver.unobserve(
+          document.querySelector('.target-element')
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+}, intersectionObserverOption);
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
@@ -27,7 +57,7 @@ const onSearchFormSubmit = async event => {
   pixabayApi.page = 1;
 
   if (pixabayApi.q === '') {
-    btnLoadMore.classList.add('is-hidden');
+    intersectionObserver.unobserve(document.querySelector('.target-element'));
     galleryArr.innerHTML = '';
     Notiflix.Notify.info('Request is empty, please enter a designation!');
     return;
@@ -40,7 +70,7 @@ const onSearchFormSubmit = async event => {
     }
 
     if (!data.total) {
-      btnLoadMore.classList.add('is-hidden');
+      intersectionObserver.unobserve(document.querySelector('.target-element'));
       galleryArr.innerHTML = '';
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -50,7 +80,7 @@ const onSearchFormSubmit = async event => {
 
     if (data.total <= 40) {
       galleryArr.innerHTML = createGalleryCards(data.hits);
-      btnLoadMore.classList.add('is-hidden');
+      intersectionObserver.unobserve(document.querySelector('.target-element'));
       Notiflix.Notify.info(
         "We're sorry, but you've reached the end of search results."
       );
@@ -68,7 +98,7 @@ const onSearchFormSubmit = async event => {
     });
     simpleLightboxImage();
 
-    btnLoadMore.classList.remove('is-hidden');
+    intersectionObserver.observe(document.querySelector('.target-element'));
   } catch (err) {
     console.log(err);
   }
@@ -76,26 +106,7 @@ const onSearchFormSubmit = async event => {
   searchForm.reset();
 };
 
-const onLoadMoreBtnElClick = async event => {
-  pixabayApi.incrementPage();
-  try {
-    const { data } = await pixabayApi.fetchPhotos();
-    galleryArr.insertAdjacentHTML('beforeend', createGalleryCards(data.hits));
-    simpleLightboxImage();
-
-    if (pixabayApi.page === Math.ceil(data.totalHits / 40)) {
-      Notiflix.Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
-      event.target.classList.add('is-hidden');
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 searchForm.addEventListener('submit', onSearchFormSubmit);
-btnLoadMore.addEventListener('click', onLoadMoreBtnElClick);
 
 function simpleLightboxImage() {
   const lightbox = new SimpleLightbox('.photo-card a', {
