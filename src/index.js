@@ -34,6 +34,8 @@ const onSearchFormSubmit = async event => {
   }
 
   try {
+    btnLoadMore.classList.add('is-hidden');
+
     const { data } = await pixabayApi.fetchPhotos();
     if (data.total > 1) {
       Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
